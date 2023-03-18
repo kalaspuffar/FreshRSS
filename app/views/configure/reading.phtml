@@ -37,9 +37,21 @@
 			</div>
 
 			<div class="form-group">
+				<div class="group-controls">
+					<label class="checkbox" for="sort_by_publish">
+						<input type="checkbox" name="sort_by_publish" id="sort_by_publish" value="1"<?=
+							FreshRSS_Context::$user_conf->sort_by_publish ? ' checked="checked"' : '' ?>
+							data-leave-validation="<?= FreshRSS_Context::$user_conf->sort_by_publish ?>"/>
+						<?= _t('conf.reading.sort_by_publish') ?>
+						<noscript> — <strong><?= _t('gen.js.should_be_activated') ?></strong></noscript>
+					</label>
+				</div>
+			</div>
+
+			<div class="form-group">
 				<label class="group-name" for="posts_per_page"><?= _t('conf.reading.articles_per_page') ?></label>
 				<div class="group-controls">
-					<input type="number" id="posts_per_page" name="posts_per_page" value="<?=
+					<input <?= FreshRSS_Context::$user_conf->sort_by_publish ? 'disabled="disabled"' : '' ?> type="number" id="posts_per_page" name="posts_per_page" value="<?=
 						FreshRSS_Context::$user_conf->posts_per_page ?>" min="5" max="500"
 						data-leave-validation="<?= FreshRSS_Context::$user_conf->posts_per_page ?>"/>
 					<p class="help"><?= _i('help') ?> <?= _t('conf.reading.number_divided_when_reader') ?></p>
@@ -49,7 +61,7 @@
 			<div class="form-group">
 				<div class="group-controls">
 					<label class="checkbox" for="auto_load_more">
-						<input type="checkbox" name="auto_load_more" id="auto_load_more" value="1"<?=
+						<input <?= FreshRSS_Context::$user_conf->sort_by_publish ? 'disabled="disabled"' : '' ?> type="checkbox" name="auto_load_more" id="auto_load_more" value="1"<?=
 							FreshRSS_Context::$user_conf->auto_load_more ? ' checked="checked"' : '' ?>
 							data-leave-validation="<?= FreshRSS_Context::$user_conf->auto_load_more ?>"/>
 						<?= _t('conf.reading.auto_load_more') ?>

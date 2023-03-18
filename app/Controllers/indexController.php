@@ -258,6 +258,7 @@ class FreshRSS_index_Controller extends FreshRSS_ActionController {
 		}
 
 		$limit = FreshRSS_Context::$number;
+		$sort_by_publish = FreshRSS_Context::$user_conf->sort_by_publish;
 
 		$date_min = 0;
 		if (FreshRSS_Context::$sinceHours) {
@@ -267,7 +268,7 @@ class FreshRSS_index_Controller extends FreshRSS_ActionController {
 
 		foreach ($entryDAO->listWhere(
 					$type, $id, FreshRSS_Context::$state, FreshRSS_Context::$order,
-					$limit, FreshRSS_Context::$first_id,
+					$limit, $sort_by_publish, FreshRSS_Context::$first_id,
 					FreshRSS_Context::$search, $date_min)
 				as $entry) {
 			yield $entry;

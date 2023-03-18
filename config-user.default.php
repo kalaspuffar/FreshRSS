@@ -27,6 +27,7 @@ return array (
 	//feverKey is md5($user . ':' . $apiPasswordPlain)
 	'feverKey' => '',
 	'posts_per_page' => 20,
+	'sort_by_publish' => false,
 	'since_hours_posts_per_rss' => 168,
 	'max_posts_per_rss' => 400,
 	'view_mode' => 'normal',

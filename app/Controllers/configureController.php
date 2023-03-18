@@ -108,6 +108,7 @@ class FreshRSS_configure_Controller extends FreshRSS_ActionController {
 	public function readingAction() {
 		if (Minz_Request::isPost()) {
 			FreshRSS_Context::$user_conf->posts_per_page = Minz_Request::param('posts_per_page', 10);
+			FreshRSS_Context::$user_conf->sort_by_publish = Minz_Request::paramBoolean('sort_by_publish');
 			FreshRSS_Context::$user_conf->view_mode = Minz_Request::param('view_mode', 'normal');
 			FreshRSS_Context::$user_conf->default_view = Minz_Request::param('default_view', 'adaptive');
 			FreshRSS_Context::$user_conf->show_fav_unread = Minz_Request::paramBoolean('show_fav_unread');

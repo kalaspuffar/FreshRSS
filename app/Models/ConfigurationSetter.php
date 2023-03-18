@@ -98,6 +98,10 @@ class FreshRSS_ConfigurationSetter {
 		$data['posts_per_page'] = $value > 0 ? $value : 10;
 	}
 
+	private function _sort_by_publish(&$data, $value) {
+		$data['sort_by_publish'] = $this->handleBool($value);
+	}
+
 	private function _queries(&$data, $values) {
 		$data['queries'] = array();
 		foreach ($values as $value) {

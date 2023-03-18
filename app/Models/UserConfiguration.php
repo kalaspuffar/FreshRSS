@@ -39,6 +39,7 @@
  * @property bool $onread_jump_next
  * @property string $passwordHash
  * @property int $posts_per_page
+ * @property bool $sort_by_publish
  * @property array<array<string,string>> $queries
  * @property bool $reading_confirm
  * @property int $since_hours_posts_per_rss

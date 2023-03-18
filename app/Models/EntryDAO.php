@@ -1069,7 +1069,7 @@ SQL;
 	}
 
 	private function sqlListWhere($type = 'a', $id = '', $state = FreshRSS_Entry::STATE_ALL,
-			$order = 'DESC', $limit = 1, $firstId = '', $filters = null, $date_min = 0) {
+			$order = 'DESC', $limit = 1, $sortByPublishDate = false, $firstId = '', $filters = null, $date_min = 0) {
 		if (!$state) {
 			$state = FreshRSS_Entry::STATE_ALL;
 		}
@@ -1115,6 +1115,8 @@ SQL;
 
 		list($searchValues, $search) = $this->sqlListEntriesWhere('e.', $filters, $state, $order, $firstId, $date_min);
 
+		$orderedBy = $sortByPublishDate ? 'ORDER BY e.date ' : 'ORDER BY e.id ';
+
 		return array(array_merge($values, $searchValues),
 			'SELECT '
 			. ($type === 'T' ? 'DISTINCT ' : '')
@@ -1123,13 +1125,15 @@ SQL;
 			. ($type === 't' || $type === 'T' ? 'INNER JOIN `_entrytag` et ON et.id_entry = e.id ' : '')
 			. 'WHERE ' . $where
 			. $search
-			. 'ORDER BY e.id ' . $order
+			. $orderedBy . $order
 			. ($limit > 0 ? ' LIMIT ' . intval($limit) : ''));	//TODO: See http://explainextended.com/2009/10/23/mysql-order-by-limit-performance-late-row-lookups/
 	}
 
 	private function listWhereRaw($type = 'a', $id = '', $state = FreshRSS_Entry::STATE_ALL,
-			$order = 'DESC', $limit = 1, $firstId = '', $filters = null, $date_min = 0) {
-		list($values, $sql) = $this->sqlListWhere($type, $id, $state, $order, $limit, $firstId, $filters, $date_min);
+			$order = 'DESC', $limit = 1, $sortByPublishDate = false, $firstId = '', $filters = null, $date_min = 0) {
+		list($values, $sql) = $this->sqlListWhere($type, $id, $state, $order, $limit, $sortByPublishDate, $firstId, $filters, $date_min);
+
+		$orderedBy = $sortByPublishDate ? 'ORDER BY e0.date ' : 'ORDER BY e0.id ';
 
 		$sql = 'SELECT e0.id, e0.guid, e0.title, e0.author, '
 			. (static::isCompressed() ? 'UNCOMPRESS(content_bin) AS content' : 'content')
@@ -1138,7 +1142,7 @@ SQL;
 			. 'INNER JOIN ('
 			. $sql
 			. ') e2 ON e2.id=e0.id '
-			. 'ORDER BY e0.id ' . $order;
+			. $orderedBy . $order;
 
 		$stm = $this->pdo->prepare($sql);
 		if ($stm && $stm->execute($values)) {
@@ -1146,7 +1150,7 @@ SQL;
 		} else {
 			$info = $stm == null ? $this->pdo->errorInfo() : $stm->errorInfo();
 			if ($this->autoUpdateDb($info)) {
-				return $this->listWhereRaw($type, $id, $state, $order, $limit, $firstId, $filters, $date_min);
+				return $this->listWhereRaw($type, $id, $state, $order, $limit, $sortByPublishDate, $firstId, $filters, $date_min);
 			}
 			Minz_Log::error('SQL error listWhereRaw: ' . $info[2]);
 			return false;
@@ -1154,8 +1158,8 @@ SQL;
 	}
 
 	public function listWhere($type = 'a', $id = '', $state = FreshRSS_Entry::STATE_ALL,
-			$order = 'DESC', $limit = 1, $firstId = '', $filters = null, $date_min = 0) {
-		$stm = $this->listWhereRaw($type, $id, $state, $order, $limit, $firstId, $filters, $date_min);
+			$order = 'DESC', $limit = 1, $sortByPublishDate = false, $firstId = '', $filters = null, $date_min = 0) {
+		$stm = $this->listWhereRaw($type, $id, $state, $order, $limit, $sortByPublishDate, $firstId, $filters, $date_min);
 		if ($stm) {
 			while ($row = $stm->fetch(PDO::FETCH_ASSOC)) {
 				yield FreshRSS_Entry::fromArray($row);
@@ -1201,7 +1205,7 @@ SQL;
 	 */
 	public function listIdsWhere($type = 'a', $id = '', $state = FreshRSS_Entry::STATE_ALL,
 								 $order = 'DESC', $limit = 1, $firstId = '', $filters = null) {
-		[$values, $sql] = $this->sqlListWhere($type, $id, $state, $order, $limit, $firstId, $filters);
+		[$values, $sql] = $this->sqlListWhere($type, $id, $state, $order, $limit, false, $firstId, $filters);
 
 		$stm = $this->pdo->prepare($sql);
 		$stm->execute($values);

@@ -43,6 +43,7 @@ class FreshRSS_Context {
 	public static $state = 0;
 	public static $order = 'DESC';
 	public static $number = 0;
+	public static $sort_by_publish = false;
 	/** @var FreshRSS_BooleanSearch */
 	public static $search;
 	public static $first_id = '';
@@ -177,11 +178,15 @@ class FreshRSS_Context {
 		self::$order = Minz_Request::param(
 			'order', self::$user_conf->sort_order
 		);
+		self::$sort_by_publish = self::$user_conf->sort_by_publish;
 		self::$number = intval(Minz_Request::param('nb', self::$user_conf->posts_per_page));
 		if (self::$number > self::$user_conf->max_posts_per_rss) {
 			self::$number = max(
 				self::$user_conf->max_posts_per_rss,
 				self::$user_conf->posts_per_page);
+		}
+		if (self::$sort_by_publish === true) {
+			self::$number = -1;
 		}
 		self::$first_id = Minz_Request::param('next', '');
 		self::$sinceHours = intval(Minz_Request::param('hours', 0));

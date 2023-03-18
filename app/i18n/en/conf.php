@@ -228,6 +228,7 @@ return array(
 			'newer_first' => 'Newest first',
 			'older_first' => 'Oldest first',
 		),
+		'sort_by_publish' => 'Sort by publish date (disable pagination)',
 		'sticky_post' => 'Stick the article to the top when opened',
 		'title' => 'Reading',
 		'view' => array(

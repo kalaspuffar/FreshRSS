@@ -720,7 +720,7 @@ function onScroll() {
 		});
 	}
 	let streamFooter;
-	if (context.auto_load_more && (streamFooter = document.getElementById('stream-footer'))) {
+	if (!context.sort_by_publish && context.auto_load_more && (streamFooter = document.getElementById('stream-footer'))) {
 		if (box_to_follow.offsetHeight > 0 &&
 			box_to_follow.scrollTop + box_to_follow.offsetHeight + (window.innerHeight / 2) >= streamFooter.offsetTop) {
 			// Too close to the last pre-loaded article
@@ -736,22 +736,23 @@ function onScroll() {
 }
 
 function init_posts() {
-	if (context.auto_load_more || context.auto_mark_scroll || context.auto_remove_article) {
-		box_to_follow = context.current_view === 'global' ? document.getElementById('panel') : document.scrollingElement;
-		let lastScroll = 0;	// Throttle
-		let timerId = 0;
-		(box_to_follow === document.scrollingElement ? window : box_to_follow).onscroll = function () {
-			clearTimeout(timerId);
-			if (lastScroll + 500 < Date.now()) {
-				lastScroll = Date.now();
-				onScroll();
-			} else {
-				timerId = setTimeout(onScroll, 500);
-			}
-		};
-		onScroll();
+	if (!context.sort_by_publish) {
+		if (context.auto_load_more || context.auto_mark_scroll || context.auto_remove_article) {
+			box_to_follow = context.current_view === 'global' ? document.getElementById('panel') : document.scrollingElement;
+			let lastScroll = 0;	// Throttle
+			let timerId = 0;
+			(box_to_follow === document.scrollingElement ? window : box_to_follow).onscroll = function () {
+				clearTimeout(timerId);
+				if (lastScroll + 500 < Date.now()) {
+					lastScroll = Date.now();
+					onScroll();
+				} else {
+					timerId = setTimeout(onScroll, 500);
+				}
+			};
+			onScroll();
+		}
 	}
-
 	if (!navigator.share && document.styleSheets.length > 0) {
 		// https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share
 		// do not show the menu entry if browser does not support navigator.share
